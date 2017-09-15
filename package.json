@@ -1,0 +1,38 @@
+{
+  "name": "grunt-html-imgbase64",
+  "version": "1.0.1",
+  "description": "Grunt plugin for imageUrl replaced by base64 data",
+  "main": "index.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/npm-ued/grunt-html-imgbase64.git"
+  },
+  "keywords": [
+    "grunt",
+    "html",
+    "base64"
+  ],
+  "author": "npm-ued",
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-jshint": "~0.8.0",
+    "grunt-contrib-nodeunit": "~0.3.0",
+    "jshint-stylish": "~0.1.5",
+    "load-grunt-tasks": "~0.3.0",
+    "sync-request": "^4.1.0"
+  },
+  "dependencies": {
+    "uglify-js": "2.4.1",
+    "chalk": "^0.4.0",
+    "datauri": "~0.2.0"
+  },
+  "bugs": {
+    "url": "https://github.com/npm-ued/grunt-html-imgbase64/issues"
+  },
+  "homepage": "https://github.com/npm-ued/grunt-html-imgbase64#readme"
+}
