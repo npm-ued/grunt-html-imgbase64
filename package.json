@@ -1,6 +1,6 @@
 {
   "name": "grunt-html-imgbase64",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Grunt plugin for imageUrl replaced by base64 data",
   "main": "index.js",
   "scripts": {
