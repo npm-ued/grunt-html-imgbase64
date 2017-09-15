@@ -16,49 +16,38 @@ var imgUrlReg=/<img.+?src=["']([^"']+?)["'].*?\/?\s*?>/gim;
 
 
 module.exports = function (grunt) {
-
-       // //var imgUrlReg=/<img.+?src=["']([^"':]+?)["'].*?\/?\s*?>/g;
-    // var imgUrlReg=/<img.+?src=["']([^"']+?)["'].*?\/?\s*?>/g;
-    // //var imgUrlReg=/<img.+?src=('|")?([^'"]+)('|")?(?:\s+|>)/gim;
-
     // Please see the Grunt documentation for more information regarding task
     // creation: http://gruntjs.com/creating-tasks
     grunt.registerMultiTask('imgbase64', 'The best Grunt plugin ever.', function () {
 
-      var options=this.options({exts:[],tag:'',maxLength:null}),
-          files = this.filesSrc,
-          dest = this.data.dest;
+        var options=this.options({exts:[],tag:'',maxLength:null}),
+            dest = this.data.dest;
+        this.files.forEach(function(file){
+            var filepath = file.src[0];
+            var fileType=path.extname(filepath).replace(/^\./, '');
+            var fileContent=grunt.file.read(filepath);
 
-        files.forEach(function(filepath){
-          var fileType=path.extname(filepath).replace(/^\./, '');
-
-          var fileContent=grunt.file.read(filepath);
-
-          if(['html','htm','php','tpl','vm'].indexOf(fileType)>-1){
-              fileContent=html(filepath,fileContent,options);
-          }else if(fileType==='css'){
-              fileContent=css(filepath,fileContent,options);
-          }else{
-
-          }
-
-          var destFile=getPathToDestination(filepath,dest);
-          grunt.file.write(destFile,fileContent);
-          //grunt.log.ok();
+            if(['html','htm','php','tpl','vm'].indexOf(fileType)>-1){
+                fileContent=html(filepath,fileContent,options);
+            }else if(fileType==='css'){
+                fileContent=css(filepath,fileContent,options);
+            }else{
+                grunt.log.writeln("others type no operate");
+            }
+            var destFile=file.dest;
+            grunt.file.write(destFile,fileContent);
             grunt.log.writeln(chalk.blue('Inline imageUrl with base64 data: ') + chalk.cyan(filepath) + ' → ' +
-                chalk.cyan(destFile));
-      });
+            chalk.cyan(destFile));
+        });
 
-  });
+    });
 
     function isRemotePath( url ){
         return url.match(/^'?https?:\/\//) || url.match(/^\/\//);
     }
-
     function isBase64Path( url ){
         return url.match(/^'?data.*base64/);
     }
-
     /**
      *
      * */
@@ -73,7 +62,6 @@ module.exports = function (grunt) {
         }
         return newPathToDestination;
     }
-
     /**
      * 用base64数据编码替换url
      * @matchedWord 匹配的子串
@@ -82,7 +70,7 @@ module.exports = function (grunt) {
      * @options 配置参数
      * */
     function replaceUrlToBase64(matchedWord,src,filepath,options){
-        var	ret = matchedWord,fileType=path.extname(src).replace(/^\./, '').replace(/\?.*$/, '');//去除参数
+        var ret = matchedWord,fileType=path.extname(src).replace(/^\./, '').replace(/\?.*$/, '');//去除参数
 
         //验证过滤后缀名
         if(options.exts&&options.exts.indexOf(fileType)===-1){
@@ -102,7 +90,7 @@ module.exports = function (grunt) {
         }else {
             var inlineFilePath;
             if(!grunt.file.isPathAbsolute(src)){
-                inlineFilePath = path.resolve( path.dirname(filepath), src ).replace(/\?.*$/, '');	// 将参数去掉
+                inlineFilePath = path.resolve( path.dirname(filepath), src ).replace(/\?.*$/, '');  // 将参数去掉
             }else{
                 inlineFilePath=src;
             }
@@ -131,7 +119,7 @@ module.exports = function (grunt) {
             console.error('urlParts null!', url);
             return url; // in case of URL mismatch return current URL
         }
-        if(urlParts[1]==='https') {return url;}
+        // if(urlParts[1]==='https') {return url;}
 
         grunt.log.writeln('Downloading started...', url);
         response = httpSync(
@@ -151,7 +139,7 @@ module.exports = function (grunt) {
                 grunt.log.writeln('This image size is greater then maxLength', url);
                 return url;
             }
-            return 'data:' + response.headers["Content-Type"] + ';base64,' + new Buffer(response.body).toString('base64');
+            return 'data:' + response.headers["content-type"] + ';base64,' + new Buffer(response.body).toString('base64');
         }else{
             return url;
         }
@@ -172,7 +160,6 @@ module.exports = function (grunt) {
      * @filepath 文件路径
      * */
     function css(filepath, fileContent,  options) {
-
         fileContent = fileContent.replace(/url\(["']*([^)'"]+)["']*\)/g, function(matchedWord, imgUrl){
             return replaceUrlToBase64(matchedWord,imgUrl,filepath,options);
         });
